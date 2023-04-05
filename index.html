@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Ramadan Fast Break Calculator</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<style>
+		h1 {
+			text-align: center;
+			font-size: 36px;
+		}
+
+		#fast-break-time, #countdown {
+			text-align: center;
+			font-size: 24px;
+			margin-top: 20px;
+		}
+	</style>
+</head>
+<body>
+	<h1>Ramadan Fast Break Calculator</h1>
+	<p id="fast-break-time"></p>
+	<p id="countdown"></p>
+
+	<script>
+		navigator.geolocation.getCurrentPosition(function(position) {
+			var lat = position.coords.latitude;
+			var lon = position.coords.longitude;
+			var url = 'https://api.aladhan.com/v1/timings?latitude=' + lat + '&longitude=' + lon + '&method=2';
+
+			$.getJSON(url, function(data) {
+				var fastBreakTime = data.data.timings.Maghrib;
+				$('#fast-break-time').text('Fast break time: ' + fastBreakTime);
+
+				var fastBreakDate = new Date();
+				var fastBreakDateString = fastBreakDate.toDateString() + ' ' + fastBreakTime;
+				var fastBreakDateTime = new Date(fastBreakDateString);
+				var remainingTime = fastBreakDateTime - new Date();
+
+				setInterval(function() {
+					var remainingHours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24);
+					var remainingMinutes = Math.floor((remainingTime / 1000 / 60) % 60);
+					var remainingSeconds = Math.floor((remainingTime / 1000) % 60);
+					$('#countdown').text('Remaining time: ' + remainingHours + 'h ' + remainingMinutes + 'm ' + remainingSeconds + 's');
+					remainingTime -= 1000;
+				}, 1000);
+			});
+		});
+	</script>
+</body>
+</html>
