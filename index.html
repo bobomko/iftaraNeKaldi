@@ -36,17 +36,26 @@
 				var fastBreakDate = new Date();
 				var fastBreakDateString = fastBreakDate.toDateString() + ' ' + fastBreakTime;
 				var fastBreakDateTime = new Date(fastBreakDateString);
-				var remainingTime = fastBreakDateTime - new Date();
+
+				var remainingTime;
+				if (localStorage.getItem('remainingTime')) {
+					remainingTime = parseInt(localStorage.getItem('remainingTime'));
+				} else {
+					remainingTime = fastBreakDateTime - new Date();
+				}
 
 				setInterval(function() {
 					var remainingHours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24);
 					var remainingMinutes = Math.floor((remainingTime / 1000 / 60) % 60);
 					var remainingSeconds = Math.floor((remainingTime / 1000) % 60);
 					$('#countdown').text('Remaining time: ' + remainingHours + 'h ' + remainingMinutes + 'm ' + remainingSeconds + 's');
+
 					remainingTime -= 1000;
+					localStorage.setItem('remainingTime', remainingTime);
 				}, 1000);
 			});
 		});
 	</script>
 </body>
 </html>
+
